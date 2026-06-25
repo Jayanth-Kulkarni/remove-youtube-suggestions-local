@@ -6,16 +6,10 @@ browser.storage.local.get('dark_mode', ({ dark_mode }) => {
 });
 
 
-// Review links, change depending on current browser.
+// Review links removed in the air-gapped build (they pointed to the Chrome Web
+// Store / Firefox Add-ons listings). The element is left inert.
 const reviewLink = document.getElementById('review-link');
-const path = browser.runtime.getURL('/');
-const isChrome = path.startsWith('chrome');
-const isFirefox = path.startsWith('moz');
-if (isFirefox) {
-	reviewLink.setAttribute('href', 'https://addons.mozilla.org/en-US/firefox/addon/remove-youtube-s-suggestions/');
-} else if (isChrome) {
-	reviewLink.setAttribute('href', 'https://chrome.google.com/webstore/detail/rys-%E2%80%94-remove-youtube-sugg/cdhdichomdnlaadbndgmagohccgpejae');
-} else {
+if (reviewLink) {
 	reviewLink.removeAttribute('href');
 	reviewLink.removeAttribute('target');
 }

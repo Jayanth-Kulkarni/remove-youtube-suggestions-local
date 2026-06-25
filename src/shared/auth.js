@@ -1,115 +1,36 @@
-// Authentication module for RYS Premium
+// Auth module — local build.
+//
+// Upstream this handled email magic-link sign-in against
+// server.lawrencehook.com (send link, poll for verification, store a session
+// token). The local build has no accounts and no server: premium is unlocked
+// for everyone (see license.js). The public API is preserved so existing call
+// sites keep working, but nothing here touches the network.
+//
+// isSignedIn() reports true so the options UI settles directly into the premium
+// state; signOut() is a no-op so that state stays sticky across reloads.
 
 const Auth = {
-  // Send magic link to email
-  async sendMagicLink(email) {
-    const response = await fetch(`${PREMIUM_CONFIG.SERVER_URL}/auth/send-magic-link`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email }),
-    });
-
-    if (!response.ok) {
-      const error = await response.json().catch(() => ({}));
-      if (response.status === 429) {
-        throw new Error(error.error || 'Too many requests. Please wait and try again.');
-      }
-      throw new Error(error.error || 'Failed to send magic link');
-    }
-
-    const data = await response.json();
-    return data.request_id;
+  async sendMagicLink(_email) {
+    throw new Error('Sign-in is disabled in the local build (premium is already unlocked).');
   },
 
-  // Poll for verification status
-  async pollForVerification(requestId, onStatusUpdate, options = {}) {
-    const startTime = Date.now();
-    const { POLL_INTERVAL_MS, POLL_TIMEOUT_MS } = PREMIUM_CONFIG;
-    const signal = options.signal;
-
-    while (Date.now() - startTime < POLL_TIMEOUT_MS) {
-      if (signal && signal.aborted) {
-        return { canceled: true };
-      }
-      try {
-        const response = await fetch(
-          `${PREMIUM_CONFIG.SERVER_URL}/auth/poll?request_id=${encodeURIComponent(requestId)}`,
-          { signal }
-        );
-
-        if (!response.ok) {
-          if (response.status === 404) {
-            const error = new Error('Request expired. Please try again.');
-            error.fatal = true;
-            throw error;
-          }
-          const error = new Error('Failed to check verification status');
-          error.fatal = true;
-          throw error;
-        }
-
-        const data = await response.json();
-
-        if (data.status === 'verified') {
-          // Store session token and email
-          await browser.storage.local.set({
-            [PREMIUM_CONFIG.STORAGE_KEYS.SESSION_TOKEN]: data.session_token,
-            [PREMIUM_CONFIG.STORAGE_KEYS.USER_EMAIL]: data.email,
-          });
-          return { success: true, email: data.email };
-        }
-
-        if (onStatusUpdate) {
-          const elapsed = Math.floor((Date.now() - startTime) / 1000);
-          onStatusUpdate({ status: 'pending', elapsed });
-        }
-      } catch (err) {
-        if (err && (err.name === 'AbortError' || (signal && signal.aborted))) {
-          return { canceled: true };
-        }
-        if (err && err.fatal) {
-          throw err;
-        }
-        // Network error, continue polling
-        console.error('Poll error:', err);
-      }
-
-      if (signal && signal.aborted) {
-        return { canceled: true };
-      }
-      await new Promise(resolve => setTimeout(resolve, POLL_INTERVAL_MS));
-    }
-
-    throw new Error('Verification timed out. Please request a new link.');
+  async pollForVerification(_requestId, _onStatusUpdate, _options = {}) {
+    throw new Error('Sign-in is disabled in the local build.');
   },
 
-  // Check if user is signed in
   async isSignedIn() {
-    const data = await browser.storage.local.get([
-      PREMIUM_CONFIG.STORAGE_KEYS.SESSION_TOKEN,
-      PREMIUM_CONFIG.STORAGE_KEYS.USER_EMAIL,
-    ]);
-    return !!data[PREMIUM_CONFIG.STORAGE_KEYS.SESSION_TOKEN];
+    return true;
   },
 
-  // Get current user email
   async getUserEmail() {
-    const data = await browser.storage.local.get(PREMIUM_CONFIG.STORAGE_KEYS.USER_EMAIL);
-    return data[PREMIUM_CONFIG.STORAGE_KEYS.USER_EMAIL] || null;
+    return 'local';
   },
 
-  // Get session token
   async getSessionToken() {
-    const data = await browser.storage.local.get(PREMIUM_CONFIG.STORAGE_KEYS.SESSION_TOKEN);
-    return data[PREMIUM_CONFIG.STORAGE_KEYS.SESSION_TOKEN] || null;
+    return null;
   },
 
-  // Sign out
   async signOut() {
-    await browser.storage.local.remove([
-      PREMIUM_CONFIG.STORAGE_KEYS.SESSION_TOKEN,
-      PREMIUM_CONFIG.STORAGE_KEYS.LICENSE_TOKEN,
-      PREMIUM_CONFIG.STORAGE_KEYS.USER_EMAIL,
-    ]);
+    // no-op: there is no session to end in the local build
   },
 };

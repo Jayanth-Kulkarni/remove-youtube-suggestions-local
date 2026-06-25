@@ -1,4 +1,4 @@
-<!-- https://upload.wikimedia.org/wikipedia/commons/e/e4/Infobox_info_icon.svg -->
+<!-- Info icon, based on the public-domain Wikimedia Commons "Infobox info icon". -->
 <svg xmlns="http://www.w3.org/2000/svg" height="160" width="160" version="1.0">
  <g fill="#4b4b4b">
   <circle cx="80" cy="80" r="70" fill="white" />

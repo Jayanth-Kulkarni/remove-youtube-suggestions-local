@@ -3,7 +3,7 @@ if (typeof browser === 'undefined') {
   browser = typeof chrome !== 'undefined' ? chrome : null;
 }
 
-const HOST = 'https://lawrencehook.com/rys/';
+const HOST = ''; // external host removed in the air-gapped build (was lawrencehook.com)
 const SECTIONS = [
   {
     name: "General",
@@ -830,13 +830,10 @@ const shortIdToId = Object.entries(idToShortId).reduce((acc, [id, shortId]) => {
 }, {});
 
 
-function sectionNameToUrl(name) {
-  const sectionPath = name.
-                        toLowerCase().
-                        replaceAll(' - ', '_').
-                        replaceAll(' ', '_');
-
-  return HOST + 'features/' + sectionPath + '/';
+function sectionNameToUrl(_name) {
+  // Air-gapped build: per-feature "learn more" docs lived on lawrencehook.com.
+  // Return an inert anchor so the section labels are not external links.
+  return '#';
 }
 
 

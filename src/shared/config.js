@@ -1,7 +1,9 @@
 // Premium server configuration
 const PREMIUM_CONFIG = {
-  // Server URL - update for production
-  SERVER_URL: 'https://server.lawrencehook.com/rys',
+  // Local build: no premium server. Left blank so any stray network call fails
+  // closed instead of reaching an external host. Premium is unlocked locally
+  // (see license.js / auth.js), so nothing here is contacted.
+  SERVER_URL: '',
 
   // Polling configuration
   POLL_INTERVAL_MS: 2000,

@@ -385,7 +385,7 @@ function settingsStrToObj(settingsStr) {
  ***************/
 const ACCOUNT_OPTION = qs('#settings-account');
 const DONATE_LINK = qs('#settings-donate');
-const DONATE_URL = 'https://www.paypal.com/donate/?cmd=_donations&business=FF9K9YD6K6SWG&Z3JncnB0=';
+const DONATE_URL = '#'; // external PayPal link removed in the air-gapped build
 const HEADER_PREMIUM_BADGE = qs('#header-premium-badge');
 const HEADER_SLOT_INDICATOR = qs('#header-slot-indicator');
 if (HEADER_SLOT_INDICATOR) {

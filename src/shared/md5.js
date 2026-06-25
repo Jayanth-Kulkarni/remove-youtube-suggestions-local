@@ -1,4 +1,4 @@
-/* Source: http://www.myersdaily.org/joseph/javascript/md5.js */
+/* Source: Joseph Myers' public-domain JavaScript MD5 implementation (myersdaily.org). */
 
 function md5cycle(x, k) {
 var a = x[0], b = x[1], c = x[2], d = x[3];

@@ -72,10 +72,10 @@ function isPremiumFromToken(token) {
   return decoded.premium === true && decoded.exp > now;
 }
 
-function getTier(licenseToken, sessionToken) {
-  if (isPremiumFromToken(licenseToken)) return TIER.PREMIUM;
-  if (sessionToken) return TIER.FREE_SIGNED_IN;
-  return TIER.FREE;
+function getTier(_licenseToken, _sessionToken) {
+  // Local build: premium is always unlocked, so no feature is ever gated or
+  // cleared on the page. (See shared/license.js and shared/auth.js.)
+  return TIER.PREMIUM;
 }
 
 // Respond to changes in settings
